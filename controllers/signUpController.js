@@ -15,7 +15,7 @@ exports.user_create_post = [
   body('family_name').trim().isLength({ min: 1 }).escape().withMessage('Family name must be specified.'),
   body('user_name').trim().isLength({ min: 1 }).escape().withMessage('Username must be specified.'),
   body('password').trim().isLength({ min: 1 }).escape().withMessage('Password must be specified.'),
-  
+
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     
@@ -28,23 +28,21 @@ exports.user_create_post = [
       return;
     }
 
-    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-      if (err) {
-        return next(err);
-      }
-      try {
-        const user = new User({
-          first_name: req.body.first_name,
-          family_name: req.body.family_name,
-          user_name: req.body.user_name,
-          password: hashedPassword,
-          membership_status: req.body.membership_status || false
-        });
-        await user.save();
-        res.redirect("/");
-      } catch (err) {
-        return next(err);
-      }
-    });
+    try {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      console.log('Hashed password:', hashedPassword); // Debug log
+      const user = new User({
+        first_name: req.body.first_name,
+        family_name: req.body.family_name,
+        user_name: req.body.user_name.toLowerCase(), // Store username in lowercase
+        password: hashedPassword,
+        membership_status: req.body.membership_status || false
+      });
+      const savedUser = await user.save();
+      console.log('User saved:', savedUser); // Debug log
+      res.redirect("/");
+    } catch (err) {
+      return next(err);
+    }
   })
 ];

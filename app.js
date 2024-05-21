@@ -4,6 +4,12 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcryptjs');
+
+const User = require('./models/user');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -18,9 +24,47 @@ const mongoDB = process.env.MONGODB_URI;
 
 main().catch((err) => console.log(err));
 async function main() {
-  console.log('Connecting to MongoDB:', mongoDB); // Check the URI being used
   await mongoose.connect(mongoDB);
 }
+
+// Passport configuration
+passport.use(new LocalStrategy({
+    usernameField: 'user_name',
+    passwordField: 'password'
+  }, async (username, password, done) => {
+    console.log('Passport strategy called');
+    try {
+      const user = await User.findOne({ user_name: username.toLowerCase() });
+      if (!user) {
+        console.log('Incorrect username');
+        return done(null, false, { message: "Incorrect username" });
+      }
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        console.log('Incorrect password');
+        return done(null, false, { message: "Incorrect password" });
+      }
+      console.log('User authenticated successfully');
+      return done(null, user);
+    } catch (err) {
+      console.log('Error in authentication', err);
+      return done(err);
+    }
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,6 +76,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session middleware
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  console.log(`Request method: ${req.method}, Request URL: ${req.url}`);
+  next();
+});
+
+// Routes
 app.use('/', indexRouter);
 app.use('/sign-up', signUpRouter);
 app.use('/log-in', logInRouter);
@@ -44,11 +105,8 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

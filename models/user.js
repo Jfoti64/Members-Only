@@ -15,7 +15,6 @@ UserSchema.virtual("full_name").get(function () {
   return `${this.family_name}, ${this.first_name}`;
 });
 
-
 // Virtual for user's URL
 UserSchema.virtual("url").get(function () {
   return `/user/${this._id}`;
