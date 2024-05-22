@@ -40,9 +40,18 @@ app.use(limiter);
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
+      "default-src": ["'self'"],
       "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+      "style-src": ["'self'", "cdn.jsdelivr.net"],
+      "img-src": ["'self'"],
+      "connect-src": ["'self'"],
+      "font-src": ["'self'", "cdn.jsdelivr.net"],
+      "object-src": ["'none'"],
+      "frame-src": ["'none'"],
+      "worker-src": ["'none'"],
+      "media-src": ["'self'"],
     },
-  }),
+  })
 );
 
 const mongoose = require("mongoose");

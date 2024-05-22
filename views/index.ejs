@@ -3,8 +3,8 @@
 <p>Welcome to the <%= title %></p>
 <% message_list.forEach(function(message) { %>
   <div class="border p-3 my-3">
-    <h3><%- decodeHtmlEntities(message.title) %></h3>
-    <p><%- decodeHtmlEntities(message.message_text) %></p>
+    <h3><%= message.title %></h3>
+    <p><%= message.message_text %></p>
 
     <% if (user && user.membership_status == true) { %>
       <p>User: <%= message.user.user_name %></p>
@@ -23,7 +23,8 @@
 <% if (user && user.membership_status) { %>
   <form action="/admin/set-admin" method="POST">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <input type="checkbox" name="admin" id="admin" onchange="this.form.submit()" <% if (user.admin) { %>checked<% } %>> Set self as Admin
+    <input type="checkbox" name="admin" id="admin" <% if (user.admin) { %>checked<% } %>> Set self as Admin
   </form>
 <% } %>
 <%- include('partials/footer') %>
+<script src="/scripts/admin.js"></script>
