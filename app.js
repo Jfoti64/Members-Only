@@ -21,7 +21,29 @@ const logOutRouter = require('./routes/logOut');
 const secretClubRouter = require('./routes/secretClub');
 const adminRouter = require('./routes/admin');
 
+const compression = require("compression");
+const helmet = require("helmet");
+
 const app = express();
+
+// Set up rate limiter: maximum of twenty requests per minute
+const RateLimit = require("express-rate-limit");
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 30,
+});
+// Apply rate limiter to all requests
+app.use(limiter);
+
+// Add helmet to the middleware chain.
+// Set CSP headers to allow our Bootstrap and Jquery to be served
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+    },
+  }),
+);
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
@@ -96,6 +118,8 @@ app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
+
+app.use(compression()); // Compress all routes
 
 // Routes
 app.use('/', indexRouter);
