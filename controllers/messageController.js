@@ -1,6 +1,6 @@
 const { body, validationResult } = require("express-validator");
-const asyncHandler = require('express-async-handler');
 const Message = require("../models/message");
+const asyncHandler = require('express-async-handler');
 
 exports.message_get = asyncHandler(async (req, res, next) => {
   res.render('message_form', { title: 'Create Message', errors: [] });
@@ -22,13 +22,16 @@ exports.message_post = [
       });
     }
 
-    const message = new Message({
-      title: req.body.message_title,
-      text: req.body.message_text,
-      user: req.user._id
-    });
-    await message.save();
-
-    return res.redirect('/');
+    try {
+      const message = new Message({
+        title: req.body.message_title,
+        message_text: req.body.message_text,
+        user: req.user._id
+      });
+      await message.save();
+      res.redirect('/');
+    } catch (err) {
+      return next(err);
+    }
   })
 ];
