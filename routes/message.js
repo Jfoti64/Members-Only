@@ -13,6 +13,7 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/log-in');
 }
 
+router.post('/delete/:id', ensureAuthenticated, csrfProtection, messageController.message_delete_post);
 router.get('/', ensureAuthenticated, csrfProtection, messageController.message_get);
 router.post('/', ensureAuthenticated, csrfProtection, messageController.message_post);
 

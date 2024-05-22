@@ -35,3 +35,12 @@ exports.message_post = [
     }
   })
 ];
+
+exports.message_delete_post = asyncHandler(async (req, res, next) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.redirect('/');
+  } catch (err) {
+    return next(err);
+  }
+});

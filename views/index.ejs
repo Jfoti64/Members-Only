@@ -9,6 +9,12 @@
     <% if (user && user.membership_status == true) { %>
       <p>User: <%= message.user.user_name %></p>
       <p><%= moment(message.timestamp).format('MMMM Do YYYY, h:mm:ss a') %></p>
+      <% if (user && user.admin == true) { %>
+        <form action="/message/delete/<%= message._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this message?');">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      <% } %>
     <% } else { %>
       <p>REDACTED</p>
     <% } %>
