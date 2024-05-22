@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const messageController = require('../controllers/messageController');
+const csrf = require('csurf');
+
+const csrfProtection = csrf({ cookie: true });
 
 // Middleware to ensure the user is authenticated
 function ensureAuthenticated(req, res, next) {
@@ -10,7 +13,7 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/log-in');
 }
 
-router.get('/', ensureAuthenticated, messageController.message_get);
-router.post('/', ensureAuthenticated, messageController.message_post);
+router.get('/', ensureAuthenticated, csrfProtection, messageController.message_get);
+router.post('/', ensureAuthenticated, csrfProtection, messageController.message_post);
 
 module.exports = router;

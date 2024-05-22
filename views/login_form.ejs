@@ -1,6 +1,7 @@
 <%- include('partials/header') %>
 <h1><%= title %></h1>
 <form action="/log-in" method="POST">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <div class="form-group">
     <label for="user_name">Username</label>
     <input id="user_name" name="user_name" placeholder="username" type="text" class="form-control" value="<%= user_name %>"/>

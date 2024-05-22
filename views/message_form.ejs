@@ -1,6 +1,7 @@
 <%- include('partials/header') %>
 <h1><%= title %></h1>
 <form action="/message" method="POST">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <div class="form-group">
     <label for="message_title">Title</label>
     <input id="message_title" name="message_title" type="text" class="form-control" value="<%= typeof message_title !== 'undefined' ? message_title : '' %>" placeholder="Title"/>

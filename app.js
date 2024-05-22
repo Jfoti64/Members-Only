@@ -8,6 +8,7 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
+const csrf = require('csurf');
 
 const User = require('./models/user');
 
@@ -18,6 +19,7 @@ const logInRouter = require('./routes/logIn');
 const messageRouter = require('./routes/message');
 const logOutRouter = require('./routes/logOut');
 const secretClubRouter = require('./routes/secretClub');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -35,22 +37,17 @@ passport.use(new LocalStrategy({
     usernameField: 'user_name',
     passwordField: 'password'
   }, async (username, password, done) => {
-    console.log('Passport strategy called');
     try {
       const user = await User.findOne({ user_name: username.toLowerCase() });
       if (!user) {
-        console.log('Incorrect username');
         return done(null, false, { message: "Incorrect username" });
       }
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
-        console.log('Incorrect password');
         return done(null, false, { message: "Incorrect password" });
       }
-      console.log('User authenticated successfully');
       return done(null, user);
     } catch (err) {
-      console.log('Error in authentication', err);
       return done(err);
     }
   }
@@ -90,9 +87,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// CSRF protection middleware
+app.use(csrf({ cookie: true }));
+
 // Middleware to set the user in local variables
 app.use((req, res, next) => {
   res.locals.user = req.user;
+  res.locals.csrfToken = req.csrfToken();
   next();
 });
 
@@ -103,7 +104,9 @@ app.use('/log-in', logInRouter);
 app.use('/users', usersRouter);
 app.use('/message', messageRouter);
 app.use('/log-out', logOutRouter);
-app.use('/secret-club', secretClubRouter);
+app.use('/admin', adminRouter); // Add this line
+app.use('/secret-club', secretClubRouter); // Add this line
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

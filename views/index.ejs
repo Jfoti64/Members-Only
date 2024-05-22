@@ -1,17 +1,23 @@
 <%- include('partials/header') %>
 <h1><%= title %></h1>
 <p>Welcome to the <%= title %></p>
-  <% message_list.forEach(function(message) { %>
-    <div class="border p-3 my-3">
-      <h3><%= message.title %></h3>
-      <p><%= message.message_text %></p>
+<% message_list.forEach(function(message) { %>
+  <div class="border p-3 my-3">
+    <h3><%= message.title %></h3>
+    <p><%= message.message_text %></p>
 
-      <% if (user && user.membership_status == true) { %>
-        <p>User: <%= message.user.user_name %></p>
-        <p><%= moment(message.timestamp).format('MMMM Do YYYY, h:mm:ss a') %></p>
-      <% } else { %>
-        <p>REDACTED</p>
-      <% } %>
-    </div>
-  <% }); %>
+    <% if (user && user.membership_status == true) { %>
+      <p>User: <%= message.user.user_name %></p>
+      <p><%= moment(message.timestamp).format('MMMM Do YYYY, h:mm:ss a') %></p>
+    <% } else { %>
+      <p>REDACTED</p>
+    <% } %>
+  </div>
+<% }); %>
+<% if (user && user.membership_status) { %>
+  <form action="/admin/set-admin" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="checkbox" name="admin" id="admin" onchange="this.form.submit()" <% if (user.admin) { %>checked<% } %>> Set self as Admin
+  </form>
+<% } %>
 <%- include('partials/footer') %>

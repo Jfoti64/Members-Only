@@ -7,7 +7,8 @@ const UserSchema = new Schema({
   family_name: { type: String, required: true, maxLength: 100 },
   user_name: { type: String, required: true, unique: true, maxLength: 100 },
   password: { type: String, required: true, maxLength: 100 },
-  membership_status: { type: Boolean, required: true, default: false }
+  membership_status: { type: Boolean, required: true, default: false },
+  admin: { type: Boolean, default: false } // Ensure default is set to false
 });
 
 // Virtual for user's full name
