@@ -15,6 +15,8 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const signUpRouter = require('./routes/signUp');
 const logInRouter = require('./routes/logIn');
+const messageRouter = require('./routes/message');
+const logOutRouter = require('./routes/logOut');
 
 const app = express();
 
@@ -87,8 +89,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Middleware to set the user in local variables
 app.use((req, res, next) => {
-  console.log(`Request method: ${req.method}, Request URL: ${req.url}`);
+  res.locals.user = req.user;
   next();
 });
 
@@ -97,6 +100,8 @@ app.use('/', indexRouter);
 app.use('/sign-up', signUpRouter);
 app.use('/log-in', logInRouter);
 app.use('/users', usersRouter);
+app.use('/message', messageRouter);
+app.use('/log-out', logOutRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

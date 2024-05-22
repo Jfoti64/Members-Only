@@ -15,8 +15,14 @@
       <div class="col-sm-2">
         <ul class="sidebar-nav">
           <li><a href="/">Home</a></li>
-          <li><a href="/sign-up">Sign up</a></li>
-          <li><a href="/log-in">Log in</a></li>
+          <% if (user) { %>
+            <p>WELCOME BACK <%= user.user_name %></p>
+            <li><a href="/log-out">LOG OUT</a></li>
+            <li><a href="/message">Create message</a></li>
+          <% } else { %>
+            <li><a href="/sign-up">Sign up</a></li>
+            <li><a href="/log-in">Log in</a></li>
+          <% } %>
         </ul>
       </div>
       <div class="col-sm-10">

@@ -1,23 +1,27 @@
 <%- include('partials/header') %>
 <h1><%= title %></h1>
-<form method="POST">
+<form action="/sign-up" method="POST">
   <div class="form-group">
     <label for="first_name">First Name</label>
-    <input id="first_name" name="first_name" placeholder="first name" type="text" class="form-control"/>
+    <input id="first_name" name="first_name" type="text" class="form-control" value="<%= typeof first_name !== 'undefined' ? first_name : '' %>" placeholder="First Name"/>
   </div>
   <div class="form-group">
     <label for="family_name">Family Name</label>
-    <input id="family_name" name="family_name" placeholder="family name" type="text" class="form-control"/>
+    <input id="family_name" name="family_name" type="text" class="form-control" value="<%= typeof family_name !== 'undefined' ? family_name : '' %>" placeholder="Family Name"/>
   </div>
   <div class="form-group">
     <label for="user_name">Username</label>
-    <input id="user_name" name="user_name" placeholder="username" type="text" class="form-control"/>
+    <input id="user_name" name="user_name" type="text" class="form-control" value="<%= typeof user_name !== 'undefined' ? user_name : '' %>" placeholder="Username"/>
   </div>
   <div class="form-group">
     <label for="password">Password</label>
-    <input id="password" name="password" type="password" placeholder="password" class="form-control"/>
+    <input id="password" name="password" type="password" class="form-control" placeholder="Password"/>
   </div>
-  <button class="btn btn-primary" type="submit">Submit</button>
+  <div class="form-group">
+    <label for="confirm_password">Confirm Password</label>
+    <input id="confirm_password" name="confirm_password" type="password" class="form-control" placeholder="Confirm Password"/>
+  </div>
+  <button class="btn btn-primary" type="submit">Sign Up</button>
 </form>
 
 <% if (errors && errors.length > 0) { %>

@@ -15,17 +15,24 @@ exports.user_create_post = [
   body('family_name').trim().isLength({ min: 1 }).escape().withMessage('Family name must be specified.'),
   body('user_name').trim().isLength({ min: 1 }).escape().withMessage('Username must be specified.'),
   body('password').trim().isLength({ min: 1 }).escape().withMessage('Password must be specified.'),
+  body('confirm_password').trim().isLength({ min: 1 }).escape().withMessage('Confirm Password must be specified.').custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error('Password confirmation does not match password');
+    }
+    return true;
+  }),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     
     if (!errors.isEmpty()) {
-      res.render('sign_up_form', {
+      return res.render('sign_up_form', {
         title: 'Sign Up',
-        user: req.body,
+        first_name: req.body.first_name,
+        family_name: req.body.family_name,
+        user_name: req.body.user_name,
         errors: errors.array()
       });
-      return;
     }
 
     try {
