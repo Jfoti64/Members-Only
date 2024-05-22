@@ -4,7 +4,7 @@
 <% message_list.forEach(function(message) { %>
   <div class="border p-3 my-3">
     <h3><%= message.title %></h3>
-    <p><%= message.message_text %></p>
+    <p><%- decodeHtmlEntities(message.message_text) %></p>
 
     <% if (user && user.membership_status == true) { %>
       <p>User: <%= message.user.user_name %></p>
