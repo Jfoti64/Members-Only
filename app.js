@@ -17,6 +17,7 @@ const signUpRouter = require('./routes/signUp');
 const logInRouter = require('./routes/logIn');
 const messageRouter = require('./routes/message');
 const logOutRouter = require('./routes/logOut');
+const secretClubRouter = require('./routes/secretClub');
 
 const app = express();
 
@@ -102,6 +103,7 @@ app.use('/log-in', logInRouter);
 app.use('/users', usersRouter);
 app.use('/message', messageRouter);
 app.use('/log-out', logOutRouter);
+app.use('/secret-club', secretClubRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

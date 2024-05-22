@@ -19,6 +19,9 @@
             <p>WELCOME BACK <%= user.user_name %></p>
             <li><a href="/log-out">LOG OUT</a></li>
             <li><a href="/message">Create message</a></li>
+            <% if (!user.membership_status) { %>
+              <li><a href="/secret-club">Join the secret club</a></li>
+            <% } %>
           <% } else { %>
             <li><a href="/sign-up">Sign up</a></li>
             <li><a href="/log-in">Log in</a></li>
